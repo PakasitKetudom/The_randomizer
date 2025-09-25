@@ -1,23 +1,4 @@
-// // src/components/Navbar.tsx
-// import ThemeToggle from "./ThemeToggle";
-// import NavLink from "./NavLink";
-
-// export default function Navbar() {
-//   return (
-//     <nav className="w-full border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur">
-//       <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-//         <div className="flex gap-6">
-//           <NavLink href="/">สุ่มเมนู</NavLink>
-//           <NavLink href="/add_menu">เพิ่มเมนู</NavLink>
-//           <NavLink href="/list_menu">ดูรายการทั้งหมด</NavLink>
-//         </div>
-//         <ThemeToggle />
-//       </div>
-//     </nav>
-//   );
-// }
-
-
+// src/components/Navbar.tsx  (Server Component)
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -26,13 +7,12 @@ export default function Navbar() {
     <nav className="w-full border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/80 backdrop-blur">
       <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex gap-6">
-          <Link href="/" className="font-medium hover:text-indigo-600 dark:hover:text-indigo-400">สุ่มเมนู</Link>
-          <Link href="/add_menu" className="font-medium hover:text-indigo-600 dark:hover:text-indigo-400">เพิ่มเมนู</Link>
-          <Link href="/list_menu" className="font-medium hover:text-indigo-600 dark:hover:text-indigo-400">ดูรายการทั้งหมด</Link>
+          <Link href="/" className="hover:text-indigo-600 dark:hover:text-indigo-400">สุ่มเมนู</Link>
+          <Link href="/add_menu" className="hover:text-indigo-600 dark:hover:text-indigo-400">เพิ่มเมนู</Link>
+          <Link href="/list_menu" className="hover:text-indigo-600 dark:hover:text-indigo-400">ดูรายการทั้งหมด</Link>
         </div>
         <ThemeToggle />
       </div>
     </nav>
   );
 }
-

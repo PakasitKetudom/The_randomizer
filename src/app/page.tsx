@@ -292,6 +292,8 @@ export default function Page() {
                 >
                     กดปุ่ม “สุ่มเมนู” เพื่อเริ่มต้น
                 </motion.div>
+
+                
                 )}
             </AnimatePresence>
     </div>
