@@ -24,23 +24,46 @@ function classNames(...xs: Array<string | false | undefined>) {
   return xs.filter(Boolean).join(" ");
 }
 
+// function TagChip({
+//   label,
+//   active,
+//   onToggle,
+// }: {
+//   label: string;
+//   active: boolean;
+//   onToggle: () => void;
+// }) {
+//   return (
+//     <button
+//       type="button"
+//       onClick={onToggle}
+//       className={classNames(
+//         "px-3 py-1 rounded-full border text-sm transition-all shadow-sm hover:shadow",
+//         active ? "bg-black text-white border-black" : "bg-white border-gray-300"
+//       )}
+//     >
+//       {label}
+//     </button>
+//   );
+// }
+
 function TagChip({
-  label,
-  active,
-  onToggle,
-}: {
-  label: string;
-  active: boolean;
-  onToggle: () => void;
-}) {
+  label, active, onToggle,
+}: { label: string; active: boolean; onToggle: () => void }) {
   return (
     <button
       type="button"
       onClick={onToggle}
-      className={classNames(
-        "px-3 py-1 rounded-full border text-sm transition-all shadow-sm hover:shadow",
-        active ? "bg-black text-white border-black" : "bg-white border-gray-300"
-      )}
+      className={
+        active
+          ? "px-3 py-1.5 rounded-full text-sm border border-indigo-600 bg-indigo-600 text-white " +
+            "focus:outline-none focus:ring-2 focus:ring-indigo-400/60"
+          : "px-3 py-1.5 rounded-full text-sm border " +
+            "border-gray-300 dark:border-gray-700 " +
+            "bg-white dark:bg-gray-950 " +
+            "text-gray-800 dark:text-gray-200 " +
+            "hover:shadow focus:outline-none focus:ring-2 focus:ring-indigo-400/60"
+      }
     >
       {label}
     </button>
@@ -116,136 +139,162 @@ export default function Page() {
   const allTags = useMemo(() => ["thai", "spicy", "vegetarian", "halal", "budget", "light"], []);
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-indigo-50 via-white to-pink-50">
-      <div className="mx-auto max-w-2xl p-6">
-        {/* Header */}
-        <motion.header
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35 }}
-          className="mb-6"
-        >
-          <h1 className="text-3xl font-bold tracking-tight">Random Food 🍚</h1>
-          <p className="text-gray-600 mt-1">เลือกเงื่อนไข แล้วให้เราช่วยสุ่มเมนูให้คุณทุกวัน</p>
-        </motion.header>
-
-        {/* Controls */}
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.05 }}
-          className="rounded-2xl border bg-white/70 backdrop-blur p-4 shadow-sm"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">มื้ออาหาร</label>
-              <div className="flex gap-2">
-                {(["breakfast", "lunch", "dinner"] as TimeKey[]).map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    onClick={() => setTime(t)}
-                    className={classNames(
-                      "px-3 py-2 rounded-xl border transition-all text-sm hover:shadow",
-                      time === t ? "bg-indigo-600 text-white border-indigo-600" : "bg-white border-gray-300"
-                    )}
-                  >
-                    {t === "breakfast" ? "เช้า" : t === "lunch" ? "กลางวัน" : "เย็น"}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">เงื่อนไข</label>
-              <div className="flex flex-wrap gap-2">
-                {allTags.map((t) => (
-                  <TagChip
-                    key={t}
-                    label={t}
-                    active={tags.includes(t)}
-                    onToggle={() =>
-                      setTags((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]))
-                    }
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-4 flex items-center gap-3">
-            <motion.button
-              whileTap={{ scale: 0.98 }}
-              whileHover={{ y: -1 }}
-              onClick={randomizeFromAPI}
-              type="button"
-              className="px-4 py-2 rounded-xl bg-indigo-600 text-white shadow hover:bg-indigo-700 disabled:opacity-60"
-              disabled={loading}
+    <div className="min-h-screen w-full
+                bg-gray-50 dark:bg-gray-950
+                text-gray-900 dark:text-gray-100">
+        <div className="mx-auto max-w-2xl p-6">
+            {/* Header */}
+            <motion.header
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
+            className="mb-6"
             >
-              {loading ? "กำลังสุ่ม..." : "สุ่มเมนู"}
-            </motion.button>
-            {!!error && <span className="text-sm text-rose-600">{error}</span>}
-          </div>
-        </motion.section>
+            <h1 className="text-3xl font-bold tracking-tight">Random Food 🍚</h1>
+            <p className="mt-1 text-gray-600 dark:text-gray-300">
+                เลือกเงื่อนไข แล้วให้เราช่วยสุ่มเมนูให้คุณทุกวัน
+            </p>
+            </motion.header>
 
-        {/* Suggestion */}
-        <div className="mt-6">
-          <AnimatePresence mode="popLayout">
-            {loading ? (
-              <motion.div
-                key="skeleton"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                className="rounded-2xl border bg-white/70 backdrop-blur p-4 shadow-sm"
-              >
-                <Skeleton className="h-6 w-1/3" />
-                <div className="mt-3 space-y-2">
-                  <Skeleton className="h-4 w-2/3" />
-                  <Skeleton className="h-4 w-1/2" />
+            {/* Controls */}
+            <motion.section
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35, delay: 0.05 }}
+            className="rounded-2xl border border-gray-200 dark:border-gray-800
+                        bg-white/90 dark:bg-gray-900/80 backdrop-blur
+                        p-4 shadow-sm"
+            >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                <label className="block text-sm font-medium mb-1
+                                    text-gray-800 dark:text-gray-200">
+                    มื้ออาหาร
+                </label>
+                <div className="flex flex-wrap gap-2">
+                    {(["breakfast", "lunch", "dinner"] as TimeKey[]).map((t) => (
+                    <button
+                        key={t}
+                        type="button"
+                        onClick={() => setTime(t)}
+                        className={classNames(
+                        "px-3 py-2 rounded-xl border text-sm transition-all hover:shadow",
+                        "focus:outline-none focus:ring-2 focus:ring-indigo-400/60",
+                        time === t
+                            ? "bg-indigo-600 text-white border-indigo-600"
+                            : "bg-white dark:bg-gray-950 border-gray-300 dark:border-gray-700 " +
+                            "text-gray-800 dark:text-gray-200"
+                        )}
+                    >
+                        {t === "breakfast" ? "เช้า" : t === "lunch" ? "กลางวัน" : "เย็น"}
+                    </button>
+                    ))}
                 </div>
-              </motion.div>
-            ) : suggestion ? (
-              <motion.div
-                key={suggestion.id}
-                initial={{ opacity: 0, y: 8, scale: 0.98 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 220, damping: 20 }}
-                className="rounded-2xl border bg-white/80 backdrop-blur p-5 shadow-md"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h2 className="text-xl font-semibold">{suggestion.nameTH}</h2>
-                    <p className="text-gray-600 text-sm mt-1">
-                      tags: {suggestion.tags.join(", ")}
-                      {suggestion.budget ? ` • ~฿${suggestion.budget}` : ""}
-                      {suggestion.cookMins ? ` • ${suggestion.cookMins} นาที` : ""}
-                    </p>
-                  </div>
-                  <motion.button
-                    whileTap={{ scale: 0.96 }}
-                    onClick={randomizeFromAPI}
-                    className="rounded-lg border px-3 py-1.5 text-sm bg-white hover:bg-gray-50"
-                    type="button"
-                  >
-                    เปลี่ยนอีกสักเมนู ↻
-                  </motion.button>
                 </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="empty"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                className="rounded-2xl border bg-white/60 backdrop-blur p-5 text-center text-gray-600"
-              >
-                กดปุ่ม “สุ่มเมนู” เพื่อเริ่มต้น
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+
+                <div>
+                <label className="block text-sm font-medium mb-1
+                                    text-gray-800 dark:text-gray-200">
+                    เงื่อนไข
+                </label>
+                <div className="flex flex-wrap gap-2">
+                    {allTags.map((t) => (
+                    <TagChip
+                        key={t}
+                        label={t}
+                        active={tags.includes(t)}
+                        onToggle={() =>
+                        setTags((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]))
+                        }
+                    />
+                    ))}
+                </div>
+                </div>
+            </div>
+
+            <div className="mt-4 flex items-center gap-3">
+                <motion.button
+                whileTap={{ scale: 0.98 }}
+                whileHover={{ y: -1 }}
+                onClick={randomizeFromAPI}
+                type="button"
+                className="px-4 py-2 rounded-xl bg-indigo-600 text-white shadow
+                            hover:bg-indigo-700 disabled:opacity-60
+                            focus:outline-none focus:ring-2 focus:ring-indigo-400/60"
+                disabled={loading}
+                >
+                {loading ? "กำลังสุ่ม..." : "สุ่มเมนู"}
+                </motion.button>
+                {!!error && <span className="text-sm text-rose-600">{error}</span>}
+            </div>
+            </motion.section>
+
+            {/* Suggestion */}
+            <div className="mt-6">
+            <AnimatePresence mode="popLayout">
+                {loading ? (
+                <motion.div
+                    key="skeleton"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    className="rounded-2xl border border-gray-200 dark:border-gray-800
+                            bg-white/90 dark:bg-gray-900/80 backdrop-blur p-4 shadow-sm"
+                >
+                    <Skeleton className="h-6 w-1/3" />
+                    <div className="mt-3 space-y-2">
+                    <Skeleton className="h-4 w-2/3" />
+                    <Skeleton className="h-4 w-1/2" />
+                    </div>
+                </motion.div>
+                ) : suggestion ? (
+                <motion.div
+                    key={suggestion.id}
+                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -8, scale: 0.98 }}
+                    transition={{ type: "spring", stiffness: 220, damping: 20 }}
+                    className="rounded-2xl border border-gray-200 dark:border-gray-800
+                            bg-white/95 dark:bg-gray-900/90 backdrop-blur
+                            p-5 shadow-md"
+                >
+                    <div className="flex items-start justify-between gap-3">
+                    <div>
+                        <h2 className="text-xl font-semibold">{suggestion.nameTH}</h2>
+                        <p className="text-sm mt-1 text-gray-700 dark:text-gray-300">
+                        tags: {suggestion.tags.join(", ")}
+                        {suggestion.budget ? ` • ~฿${suggestion.budget}` : ""}
+                        {suggestion.cookMins ? ` • ${suggestion.cookMins} นาที` : ""}
+                        </p>
+                    </div>
+                    <motion.button
+                        whileTap={{ scale: 0.96 }}
+                        onClick={randomizeFromAPI}
+                        className="rounded-lg border border-gray-300 dark:border-gray-700
+                                px-3 py-1.5 text-sm bg-white dark:bg-gray-950
+                                text-gray-800 dark:text-gray-200
+                                hover:bg-gray-50 dark:hover:bg-gray-900"
+                        type="button"
+                    >
+                        เปลี่ยนอีกสักเมนู ↻
+                    </motion.button>
+                    </div>
+                </motion.div>
+                ) : (
+                <motion.div
+                    key="empty"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    className="rounded-2xl border border-gray-200 dark:border-gray-800
+                            bg-white/70 dark:bg-gray-900/80 backdrop-blur
+                            p-5 text-center text-gray-700 dark:text-gray-300"
+                >
+                    กดปุ่ม “สุ่มเมนู” เพื่อเริ่มต้น
+                </motion.div>
+                )}
+            </AnimatePresence>
+    </div>
 
         {/* History (ถ้าต้องการแสดง เปิดคอมเมนต์บล็อกนี้และเปิด saveHistory ใน API) */}
         {/* {history.length > 0 && (
